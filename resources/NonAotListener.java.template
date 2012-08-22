@@ -1,0 +1,28 @@
+package nonaotwar;
+
+import java.io.IOException;
+
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
+
+import clojure.lang.RT;
+
+public class NonAotListener implements ServletContextListener {
+
+    @Override
+    public void contextInitialized(ServletContextEvent sce) {
+        try {
+            RT.loadResourceScript("ring/util/servlet.clj");
+            <<clojure-loads>>
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        <<handler-init>>
+    }
+
+    @Override
+    public void contextDestroyed(ServletContextEvent sce) {
+        <<handler-destroy>>
+    }
+
+}

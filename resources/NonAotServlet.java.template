@@ -1,0 +1,34 @@
+package nonaotwar;
+
+import java.io.IOException;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import clojure.lang.IFn;
+import clojure.lang.RT;
+import clojure.lang.Var;
+
+public class NonAotServlet extends HttpServlet {
+
+    private static final long serialVersionUID = 1L;
+
+    private Var handlerVar;
+
+    private IFn serviceFn;
+
+    @Override
+    public void init() {
+        serviceFn = RT.var("ring.util.servlet", "make-service-method").fn();
+        handlerVar = RT.var("<<handler-namespace>>", "<<handler-name>>");
+    }
+
+    @Override
+    protected void service(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+        IFn handlerFn = (IFn) serviceFn.invoke(handlerVar.fn());
+        handlerFn.invoke(this, req, resp);
+    }
+}
